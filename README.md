@@ -43,6 +43,8 @@
 ## 通信协议
 - **TLS**: (Transport Layer Security)：实现加密传输、身份验证 **(已实现)**
 - **Noise Protocol Framework**：适用于现代通讯软件
+- **Tor**： 接入Tor网络
+- **I2P**：接入I2P网络
 
 ## 零知识证明
 - zk-SNARKs, zk-STARKs
