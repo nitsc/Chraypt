@@ -49,3 +49,5 @@
 ## 零知识证明
 - zk-SNARKs, zk-STARKs
 
+# 缺点与不足
+以下是来自 ChatGPT-4o mini 的分析：(分析)[https://chatgpt.com/share/678b8087-88d8-8008-b6cc-e2c74efe3fdf]
