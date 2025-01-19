@@ -15,6 +15,11 @@
   
 
 # 目标标准
+## 语言
+- **C++**: Python 原型开发完成后，使用 C++ 重写 Chraypt，并重新命名为 Chraypt++
+- **Python**: 可能会保留一定的 Python 部分
+- **Go**: 可能会用于 Chraypt++ 的网络并发关键部分
+
 ## 加密算法
 ### 对称加密：用于加密大量数据，速度快
 - **AES**(Advanced Encryption Standard)：广泛应用于通信协议（如TLS） **(已实现)**
