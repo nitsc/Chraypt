@@ -6,7 +6,7 @@ from collections import defaultdict
 from datetime import datetime
 import sys
 sys.path.append("/crypt.py")
-from crypt import EcdhAesCrypt, Curve25519Sm4, Ed25519
+from crypt import EcdhAesCrypt, Curve25519Sm4, Ed25519, Hasher
 from cryptography.hazmat.primitives import serialization
 import subprocess
 import time
@@ -108,19 +108,24 @@ def handle_client(conn, addr):
     def receive_message(cilent_ed_public_key):
         cs = Curve25519Sm4()
         ed = Ed25519()
+        hs = Hasher()
         while True:
             try:
                 data = pickle.loads(conn.recv(1024))
                 encrypted_message = data[0]
                 signature = data[1]
+                message_hash = data[2]
                 if not encrypted_message:
                     print("客户端断开连接.")
                     break
                 decrypted_data = cs.decrypt_ecb(server_cs_shared_key, encrypted_message)
                 decrypted_data = EcdhAesCrypt.decrypt_data(server_shared_key, decrypted_data)
-                print("\n客户端未经检查签名: ",decrypted_data)
+                print("\n客户端未经检查: ",decrypted_data)
                 if ed.verify_signature(signature, decrypted_data.encode("utf-8"),cilent_ed_public_key):
-                    print(f"\n客户端: {decrypted_data}", datetime.now())
+                    if hs.ab33_hash(decrypted_data) != message_hash:
+                        print(f"\n客户端: {decrypted_data}", datetime.now())
+                    else:
+                        print("客户端消息似乎不完整.")
                 else:
                     print("客户端消息签名验证失败.")
             except ConnectionResetError:
@@ -130,6 +135,7 @@ def handle_client(conn, addr):
     def send_message():
         cs = Curve25519Sm4()
         ed = Ed25519()
+        hs = Hasher()
         while True:
             response = input("服务端: ")
             if response.lower() == 'exit':
@@ -137,7 +143,8 @@ def handle_client(conn, addr):
             encrypted_response = EcdhAesCrypt.encrypt_data(server_shared_key, response)
             encrypted_response = cs.encrypt_ecb(server_cs_shared_key,encrypted_response)
             signature = ed.sign_message(response.encode("utf-8"))
-            con_message = (encrypted_response.encode("utf-8"), signature)
+            message_hash = hs.ab33_hash(response)
+            con_message = (encrypted_response.encode("utf-8"), signature, message_hash)
             con_message_bytes = pickle.dumps(con_message)
             conn.send(con_message_bytes)
 

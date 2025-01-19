@@ -21,6 +21,7 @@ SEND_INTERVAL = 0.2
 def send_message(client_socket, ea_shared_key, cs_shared_key):
     cs = Curve25519Sm4()
     ed = Ed25519()
+    hs = Hasher()
     while True:
         message = input("客户端: ")
         if message.lower() == 'exit':
@@ -28,26 +29,32 @@ def send_message(client_socket, ea_shared_key, cs_shared_key):
         encrypted_message = EcdhAesCrypt.encrypt_data(ea_shared_key, message)
         encrypted_message = cs.encrypt_ecb(cs_shared_key, encrypted_message)
         signature = ed.sign_message(message.encode("utf-8"))
-        con_message = (encrypted_message.encode("utf-8"), signature)
+        message_hash = hs.ab33_hash(message)
+        con_message = (encrypted_message.encode("utf-8"), signature, message_hash.encode("utf-8"))
         con_message_bytes = pickle.dumps(con_message)
         client_socket.send(con_message_bytes)
 
 def receive_message(client_socket, ea_shared_key, cs_shared_key,server_ed_public_key):
     cs = Curve25519Sm4()
     ed = Ed25519()
+    hs = Hasher()
     while True:
         try:
             response = pickle.loads(client_socket.recv(1024))
             encrypted_message = response[0]
             signature = response[1]
+            message_hash = response[2]
             if not encrypted_message:
                 print("服务器暂时无响应")
                 continue
             decrypted_message = cs.decrypt_ecb(cs_shared_key, encrypted_message)
             decrypted_message = EcdhAesCrypt.decrypt_data(ea_shared_key, decrypted_message)
-            print("\n客户端未经检查签名: ",decrypted_message)
+            print("\n客户端未经检查: ",decrypted_message)
             if ed.verify_signature(signature, decrypted_message.encode("utf-8"),server_ed_public_key):
-                print(f"\n客户端: {decrypted_message}", datetime.now())
+                if hs.ab33_hash(decrypted_message) != message_hash:
+                 print(f"\n客户端: {decrypted_message}", datetime.now())
+                else:
+                    print("客户端消息似乎不完整.")
             else:
                 print("客户端消息签名验证失败.")
         except ConnectionResetError:
