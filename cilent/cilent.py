@@ -1,14 +1,14 @@
-import socket
+import sys
 import ssl
 import time
 import pickle
+import socket
 import threading
-from collections import defaultdict
-from datetime import datetime
-import sys
 sys.path.append("/crypt.py")
-from crypt import EcdhAesCrypt, Curve25519Sm4, Ed25519, Hasher
+from datetime import datetime
+from collections import defaultdict
 from cryptography.hazmat.primitives import serialization
+from crypt import EcdhAesCrypt, Curve25519Sm4, Ed25519, Hasher
 
 
 
@@ -33,6 +33,7 @@ def send_message(client_socket, ea_shared_key, cs_shared_key):
         con_message = (encrypted_message.encode("utf-8"), signature, message_hash.encode("utf-8"))
         con_message_bytes = pickle.dumps(con_message)
         client_socket.send(con_message_bytes)
+
 
 def receive_message(client_socket, ea_shared_key, cs_shared_key,server_ed_public_key):
     cs = Curve25519Sm4()
@@ -61,6 +62,7 @@ def receive_message(client_socket, ea_shared_key, cs_shared_key,server_ed_public
             print("服务器重置连接.")
             break
 
+
 def start_client():
     current_time = time.time()
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -86,6 +88,7 @@ def start_client():
     salt = "CN.Guangdong.Yunfu.Cheetah"
     sugar = "Zhou Cilent, Chraypt"
     '''
+
     # 验证身份
     print("该服务器需要验证你的身份：")
     key = input("请输入密钥: ")
@@ -107,10 +110,6 @@ def start_client():
     # 创建客户端 EdDSA 密钥对
     ed = Ed25519()
     private_ed_key, public_ed_key = ed.serialize_private_key(), ed.serialize_public_key()
-
-    print("客户端EA公钥:", client_public_key, "类型",type(client_public_key))
-    print("客户端CS公钥:", client_cs_public_key, "类型",type(client_cs_public_key))
-    print("客户端EdDSA公钥:", public_ed_key, "类型",type(public_ed_key))
 
     # 发送客户端EA公钥
     client_socket.send(client_public_key.public_bytes(
@@ -146,6 +145,8 @@ def start_client():
 
     while True:
         pass  # 保持主线程运行
+
+
 
 if __name__ == "__main__":
     try:

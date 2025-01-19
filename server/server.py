@@ -1,15 +1,16 @@
+import sys
+import ssl
+import time
 import pickle
 import socket
 import threading
-import ssl
-from collections import defaultdict
-from datetime import datetime
-import sys
-sys.path.append("/crypt.py")
-from crypt import EcdhAesCrypt, Curve25519Sm4, Ed25519, Hasher
-from cryptography.hazmat.primitives import serialization
 import subprocess
-import time
+sys.path.append("/crypt.py")
+from datetime import datetime
+from collections import defaultdict
+from cryptography.hazmat.primitives import serialization
+from crypt import EcdhAesCrypt, Curve25519Sm4, Ed25519, Hasher
+
 
 
 # 存储哈希值
@@ -45,6 +46,7 @@ def handle_client(conn, addr):
     connection_count[addr[0]] += 1
 
     print(f"建立连接: {addr}")
+    conn.settimeout(600)
 
     if current_time - last_sent[addr[0]] < SEND_INTERVAL:
         print(f"发送频率过快，拒绝请求: {addr}")
@@ -72,10 +74,6 @@ def handle_client(conn, addr):
     # 生成服务器的 EdDSA 密钥对
     ed  = Ed25519()
     private_ed_key, public_ed_key = ed.serialize_private_key(), ed.serialize_public_key()
-
-    print("服务器EA公钥:", server_public_key, "类型", type(server_public_key))
-    print("服务器CS公钥:", server_cs_public_key, "类型", type(server_cs_public_key))
-    print("服务器EdDSA公钥:", public_ed_key, "类型", type(public_ed_key))
 
     # 发送服务器EA公钥给客户端
     conn.send(server_public_key.public_bytes(
@@ -105,6 +103,7 @@ def handle_client(conn, addr):
     # 计算共享CS密钥
     server_cs_shared_key = server_cs.generate_shared_key(client_cs_public_key).hex()
 
+
     def receive_message(cilent_ed_public_key):
         cs = Curve25519Sm4()
         ed = Ed25519()
@@ -132,6 +131,7 @@ def handle_client(conn, addr):
                 print("客户端重置连接.")
                 break
 
+
     def send_message():
         cs = Curve25519Sm4()
         ed = Ed25519()
@@ -154,6 +154,7 @@ def handle_client(conn, addr):
     while True:
         pass
 
+
 def start_server():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(('0.0.0.0', 52000))
@@ -168,6 +169,8 @@ def start_server():
     while True:
         conn, addr = server_socket.accept()
         threading.Thread(target=handle_client, args=(conn, addr)).start()
+
+
 
 if __name__ == "__main__":
     try:
