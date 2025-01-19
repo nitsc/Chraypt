@@ -8,7 +8,7 @@
 # 目标标准
 ## 加密算法
 ### 对称加密：用于加密大量数据，速度快
-- **AES**(Advanced Encryption Standard)：广泛应用于通信协议（如TLS）
+- **AES**(Advanced Encryption Standard)：广泛应用于通信协议（如TLS） **(已实现)**
 - **ChaCha20**： 一种流密码，通常与 Poly1305 消息认证码结合使用，提供高效且安全的加密和认证
 - **SM4**：中国国家密码局发布的商用密码算法，在中国的金融和政府部门得到广泛应用
 
@@ -22,7 +22,7 @@
 
 ## 密钥交换算法
 - **Diffie-Hellman** (DH)：用于安全地生成共享密钥
-- **ECDH** (Elliptic Curve Diffie-Hellman)：基于椭圆曲线，更高效
+- **ECDH** (Elliptic Curve Diffie-Hellman)：基于椭圆曲线，更高效 **(已实现)**
 - **CSIDH** (Commutative Supersingular Isogeny Diffie-Hellman) 是一种基于超奇异椭圆曲线同源的后量子密钥交换协议
 
 ## 数字签名算法
@@ -41,7 +41,7 @@
 - **CSPRNG** (Cryptographically Secure Pseudo-Random Number Generator)
 
 ## 通信协议
-- **TLS**: (Transport Layer Security)：实现加密传输、身份验证 **(已实现)**
+- **TLS**: (Transport Layer Security)：实现加密传输、身份验证 **(已实现,但是由于 SSL 不信任自签名证书，暂时取消客户端验证)**
 - **Noise Protocol Framework**：适用于现代通讯软件
 - **Tor**： 接入Tor网络
 - **I2P**：接入I2P网络
