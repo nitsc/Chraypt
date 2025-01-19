@@ -21,8 +21,9 @@
 - **Code-based Cryptography**：是一种后量子密码学方法，它使用纠错码理论中的难题来构建密码系统
 
 ## 密钥交换算法
-- **Diffie-Hellman** (DH)：用于安全地生成共享密钥
+- **Diffie-Hellman** (DH)：用于安全地生成共享密钥 **(取消，因为密钥ECDH高效，而且量子安全性低)**
 - **ECDH** (Elliptic Curve Diffie-Hellman)：基于椭圆曲线，更高效 **(已实现)**
+- **Kyber**: 是一个基于格的密钥交换协议，已经进入了 NIST 后量子加密标准化项目 的候选方案
 - **CSIDH** (Commutative Supersingular Isogeny Diffie-Hellman) 是一种基于超奇异椭圆曲线同源的后量子密钥交换协议 **(取消，因为目前没有成熟的CSIDH库)**
 
 ## 数字签名算法
