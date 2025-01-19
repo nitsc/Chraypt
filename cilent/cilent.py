@@ -74,7 +74,11 @@ def start_client():
     last_sent[server_ip[0]] =int(current_time)
 
 
-
+    '''
+    data = "127.0.0.1"
+    salt = "CN.Guangdong.Yunfu.Cheetah"
+    sugar = "Zhou Cilent, Chraypt"
+    '''
     # 验证身份
     print("该服务器需要验证你的身份：")
     key = input("请输入密钥: ")
