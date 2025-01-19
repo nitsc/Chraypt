@@ -23,7 +23,7 @@
 ## 密钥交换算法
 - **Diffie-Hellman** (DH)：用于安全地生成共享密钥
 - **ECDH** (Elliptic Curve Diffie-Hellman)：基于椭圆曲线，更高效 **(已实现)**
-- **CSIDH** (Commutative Supersingular Isogeny Diffie-Hellman) 是一种基于超奇异椭圆曲线同源的后量子密钥交换协议
+- **CSIDH** (Commutative Supersingular Isogeny Diffie-Hellman) 是一种基于超奇异椭圆曲线同源的后量子密钥交换协议 **(取消，因为目前没有成熟的CSIDH库)**
 
 ## 数字签名算法
 - **ECDSA**(Elliptic Curve Digital Signature Algorithm)：是一种广泛使用的数字签名算法，它基于椭圆曲线密码学 (ECC)
