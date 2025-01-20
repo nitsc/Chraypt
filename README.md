@@ -1,6 +1,6 @@
 # 概述
 ![Chraypt](https://github.com/user-attachments/assets/da9b0294-479e-4814-a377-a934ef4ee8b6)
-一个以保障人权为核心理念的命令行通讯软件，专注于信息安全与隐私保护。目前已实现哈希验证身份和多算法加密通信等功能，为用户提供可靠的隐私保障。
+一个以保障人权为核心理念的命令行通讯软件，专注于信息安全与隐私保护。目前已实现哈希验证身份和多算法加密通信等功能，为用户提供可靠的隐私保障。这个是中国大陆特供版，没有Tor功能集成。国际版请见[Chrayptor](https://github.com/nitsc/chrayptor)。
 
 # 开发宗旨
 ## 概述
@@ -16,9 +16,9 @@
 
 # 目标标准
 ## 语言
-- **C++**: Python 原型开发完成后，使用 C++ 重写 Chraypt，并重新命名为 Chraypt++
+- **Rust**: Python 原型开发完成后，使用 Rust 重写 Chraypt
 - **Python**: 可能会保留一定的 Python 部分
-- **Go**: 可能会用于 Chraypt++ 的网络并发关键部分
+- **Go**: 可能会用于 Chraypt 的网络并发关键部分
 
 ## 加密算法
 ### 对称加密：用于加密大量数据，速度快
@@ -58,8 +58,6 @@
 ## 通信协议
 - **TLS**: (Transport Layer Security)：实现加密传输、身份验证 **(已实现,但是由于 SSL 不信任自签名证书，暂时取消客户端验证)**
 - **Noise Protocol Framework**：适用于现代通讯软件
-- **Tor**： 接入Tor网络
-- **I2P**：接入I2P网络
 
 ## 零知识证明
 - zk-SNARKs, zk-STARKs
