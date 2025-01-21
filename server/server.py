@@ -10,7 +10,7 @@ sys.path.append("/crypt.py")
 from datetime import datetime
 from collections import defaultdict
 from cryptography.hazmat.primitives import serialization
-from crypt import EcdhAesCrypt, Curve25519Sm4, Ed25519, Hasher
+from crypt import EcdhAes, Curve25519Sm4, Ed25519, Hasher
 
 
 
@@ -35,6 +35,7 @@ result = subprocess.run([PWSH_PATH, 'powershell', '-Command', PS_COMMAND], captu
 
 def handle_client(conn, addr):
     try:
+        ea =EcdhAes()
         current_time = time.time()
         # 检查当前IP的连接数
         if connection_count[addr[0]] >= MAX_CONNECTIONS:
@@ -64,7 +65,7 @@ def handle_client(conn, addr):
         print("密钥验证成功")
 
         # 生成服务器的密钥对
-        server_private_key, server_public_key = EcdhAesCrypt.generate_ecc_keypair()
+        server_private_key, server_public_key = ea.generate_ecc_keypair()
         server_cs = Curve25519Sm4()
         server_cs_private_key, server_cs_public_key = server_cs.get_private_key(), server_cs.get_public_key()
         ed = Ed25519()
@@ -96,7 +97,8 @@ def handle_client(conn, addr):
 
         # 计算共享密钥
         try:
-            server_shared_key = EcdhAesCrypt.generate_shared_key(server_private_key, client_public_key)
+            ea = EcdhAes()
+            server_shared_key = ea.generate_shared_key(server_private_key, client_public_key)
             server_cs_shared_key = server_cs.generate_shared_key(client_cs_public_key).hex()
         except Exception as e:
             print(f"计算共享密钥时出错: {e}")
@@ -107,6 +109,7 @@ def handle_client(conn, addr):
             cs = Curve25519Sm4()
             ed = Ed25519()
             hs = Hasher()
+            ea = EcdhAes()
             while True:
                 try:
                     data = pickle.loads(conn.recv(1024))
@@ -117,7 +120,7 @@ def handle_client(conn, addr):
                         print("客户端断开连接.")
                         break
                     decrypted_data = cs.decrypt_ecb(server_cs_shared_key, encrypted_message)
-                    decrypted_data = EcdhAesCrypt.decrypt_data(server_shared_key, decrypted_data)
+                    decrypted_data = ea.decrypt_data(server_shared_key, decrypted_data)
                     print("\n客户端未经检查: ", decrypted_data)
 
                     if ed.verify_signature(signature, decrypted_data.encode("utf-8"), client_ed_public_key):
@@ -138,12 +141,13 @@ def handle_client(conn, addr):
             cs = Curve25519Sm4()
             ed = Ed25519()
             hs = Hasher()
+            ea = EcdhAes()
             while True:
                 try:
                     response = input("服务端: ")
                     if response.lower() == 'exit':
                         break
-                    encrypted_response = EcdhAesCrypt.encrypt_data(server_shared_key, response)
+                    encrypted_response = ea.encrypt_data(server_shared_key, response)
                     encrypted_response = cs.encrypt_ecb(server_cs_shared_key, encrypted_response)
                     signature = ed.sign_message(response.encode("utf-8"))
                     message_hash = hs.ab33_hash(response)

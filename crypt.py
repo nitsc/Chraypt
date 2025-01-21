@@ -23,19 +23,19 @@ SALT = b'''09417ec5dd7f3adec25d45122afec72ab7a4fe6d1fa176d318f1310fcbf8af4ade7ac
 
 
 
-class EcdhAesCrypt:
-    def __init__(self,):
+class EcdhAes:
+    def __init__(self):
         pass
 
 
     # 生成ECC密钥对（ECDH）
-    def generate_ecc_keypair():
+    def generate_ecc_keypair(self):
         private_key = ec.generate_private_key(ec.SECP256R1(), default_backend())
         public_key = private_key.public_key()
         return private_key, public_key
 
 
-    def generate_shared_key(private_key, peer_public_key):
+    def generate_shared_key(self, private_key, peer_public_key):
         shared_key = private_key.exchange(ec.ECDH(), peer_public_key)
         # 使用固定的salt值来派生共享密钥
         kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=SALT, iterations=100000, backend=default_backend())
@@ -44,7 +44,7 @@ class EcdhAesCrypt:
 
 
     # 加密数据
-    def encrypt_data(shared_key, data):
+    def encrypt_data(self, shared_key, data):
         # 创建AES加密器（使用GCM模式）
         iv = os.urandom(12)  # 随机生成初始向量
         cipher = Cipher(algorithms.AES(shared_key), modes.GCM(iv), backend=default_backend())
@@ -56,7 +56,7 @@ class EcdhAesCrypt:
 
 
     # 解密数据
-    def decrypt_data(shared_key, encrypted_data):
+    def decrypt_data(self, shared_key, encrypted_data):
         if encrypted_data is None:
             print('消息：', encrypted_data)
             pass
@@ -105,7 +105,7 @@ class Curve25519Sm4:
         return shared_key
 
 
-    def str_to_strBin(self, hex_str):
+    def str_to_str_bin(self, hex_str):
         return binascii.unhexlify(hex_str.hex())
 
 
@@ -130,7 +130,7 @@ class Curve25519Sm4:
         # 使用传入的密钥设置解密模式
         self.crypt_sm4.set_key(binascii.a2b_hex(decrypt_key), SM4_DECRYPT)
         decrypt_value = self.crypt_sm4.crypt_ecb(encrypt_value_bytes)
-        return self.str_to_strBin(decrypt_value)
+        return self.str_to_str_bin(decrypt_value)
 
 
 
@@ -223,4 +223,3 @@ class Hasher:
         blake3_hash = blake3.blake3(hashed_data_bytes).hexdigest()
 
         return blake3_hash
-
