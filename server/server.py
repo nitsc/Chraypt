@@ -5,6 +5,7 @@ import pickle
 import socket
 import threading
 import subprocess
+from pathlib import Path
 sys.path.append("/crypt.py")
 from datetime import datetime
 from collections import defaultdict
@@ -30,14 +31,6 @@ PWSH_PATH = "C:/Program Files/PowerShell/7/pwsh.exe"
 
 # 先关闭占用 52000 端口的进程
 result = subprocess.run([PWSH_PATH, 'powershell', '-Command', PS_COMMAND], capture_output=True, text=True)
-
-import time
-import threading
-import pickle
-from datetime import datetime
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.exceptions import InvalidSignature
 
 
 def handle_client(conn, addr):
@@ -186,10 +179,17 @@ def start_server():
         server_socket.listen(1)  # 开始监听
         print("服务端在端口 52000 监听...")
 
+        # 获取当前文件的路径
+        current_dir = Path(__file__).parent
+
+        # 拼接相对路径
+        certfile = current_dir / 'pems' / 'certfile.crt'
+        keyfile = current_dir / 'pems' / 'keyfile.key'
+
         # 创建SSL上下文
         context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-        context.load_cert_chain(certfile="D:/chraypt/server/pems/certfile.crt",
-                                keyfile="D:/chraypt/server/pems/keyfile.key")
+        context.load_cert_chain(certfile=certfile,
+                                keyfile=keyfile)
 
         # 包装Socket为SSL连接
         server_socket = context.wrap_socket(server_socket, server_side=True)
